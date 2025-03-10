@@ -1,0 +1,4 @@
+{
+    "rust-analyzer.check.targets": "thumbv8m.main-none-eabihf",
+    "rust-analyzer.check.allTargets": false
+}
