@@ -19,6 +19,11 @@ fn IPC() {
 async fn main(_spawner: Spawner) {
     let mut cp = cortex_m::Peripherals::take().unwrap();
 
+    unsafe {
+        NVIC::unmask(pac::Interrupt::IPC);
+        cp.NVIC.set_priority(pac::Interrupt::IPC, 0 << 5);
+    }
+
     let mode = SystemMode {
         lte_support: true,
         nbiot_support: true,
@@ -28,10 +33,7 @@ async fn main(_spawner: Spawner) {
     };
     nrf_modem::init(mode).await.unwrap();
 
-    unsafe {
-        NVIC::unmask(pac::Interrupt::IPC);
-        cp.NVIC.set_priority(pac::Interrupt::IPC, 0 << 5);
-    }
+    nrf_modem::send_at::<16>("AT+CGMR").await.unwrap();
 
     loop {
         Timer::after_millis(1000).await;
